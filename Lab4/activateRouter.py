@@ -29,11 +29,21 @@ class Activate:
 				cost = i[1]
 				return cost
 
+	def getPortNumber(self, origin, destination):
+		ports = tp.portNumber
+		index = origin +','+ destination
+		if origin == destination:
+			return 0
+		else:
+			return ports[index]
+
+
 	def getData(self, router):
 		data = []
 		path = self.dk.routes.paths[router]
 		cost = self.getCost(router)
-		return path[1], cost
+		portNumber = self.getPortNumber(self.routerName, path[1])
+		return path[1], cost, portNumber
 
 	def buildTable(self):
 		connection = sqlite3.connect('routerInformation_'+self.routerName+'.db')
@@ -49,13 +59,12 @@ class Activate:
 
 		routerList = tp.routers
 		for i in routerList:
-			interface = 0
-			nextHop, cost = self.getData(i)
-			print(i, nextHop, cost)
+			nextHop, cost, interface = self.getData(i)
+			print(i, nextHop, cost, interface)
 			parameters = [i, nextHop, cost, interface]
 			db.execute('INSERT INTO routingTable VALUES(?, ?, ?, ?)', parameters)
 			connection.commit()
 
 
 
-r = Activate('B')
+#r = Activate('C')
